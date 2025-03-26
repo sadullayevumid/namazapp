@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Namoz Daftari</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+</head>
+<body class="premium-theme">
+    <!-- Background Elements -->
+    <div class="premium-bg-overlay"></div>
+    <div class="floating-elements">
+        <div class="floating-circle green-circle-1"></div>
+        <div class="floating-circle green-circle-2"></div>
+        <div class="floating-circle green-circle-3"></div>
+        <div class="floating-islamic-pattern pattern-1"></div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark premium-navbar">
+        <div class="container">
+            <a class="navbar-brand" href="/dashboard">
+                <div class="brand-logo">
+                    <i class="fas fa-mosque white-icon"></i>
+                    <span class="brand-text">Namoz Daftari</span>
+                </div>
+            </a>
+            <div class="navbar-actions">
+                <a href="/settings" class="btn btn-premium-nav">
+                    <i class="fas fa-cog me-1"></i> Sozlamalar
+                </a>
+                <a href="/logout" class="btn btn-premium-nav">
+                    <i class="fas fa-sign-out-alt me-1"></i> Chiqish
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container premium-container">
+        <!-- Date Time Card -->
+        <div class="premium-datetime-card animate__animated animate__fadeInDown">
+            <div class="datetime-content">
+                <h2 class="premium-date">
+                    <i class="far fa-calendar-alt white-icon"></i>
+                    <span id="current-date" class="highlight"></span>
+                </h2>
+                <h3 class="premium-hijri">
+                    <i class="fas fa-moon white-icon"></i>
+                    <span id="hijri-date" class="highlight"></span>
+                </h3>
+                <div class="premium-clock">
+                    <i class="far fa-clock white-icon"></i>
+                    <span id="current-time" class="highlight"></span>
+                </div>
+            </div>
+            <div class="green-divider"></div>
+        </div>
+
+        <!-- Prayer Times Card -->
+        <div class="premium-prayer-card animate__animated animate__fadeInUp">
+            <div class="card-header premium-card-header">
+                <div class="header-content">
+                    <i class="fas fa-map-marker-alt white-icon"></i>
+                    <h3>{{ region }} shahridagi namoz vaqtlari</h3>
+                </div>
+                <div class="green-header-decoration"></div>
+            </div>
+            <div class="card-body">
+                <ul class="premium-prayer-list">
+                   {% for name, time in prayer_times.items() %}
+                        <li class="premium-prayer-item">
+                            <div class="prayer-info">
+                                <div class="prayer-sticker">
+                                    {% if name == 'Bomdod' %}
+                                        <div class="sticker-icon fajr-sticker">
+                                            <i class="fas fa-sunrise"></i>
+                                        </div>
+                                    {% elif name == 'Peshin' %}
+                                        <div class="sticker-icon dhuhr-sticker">
+                                            <i class="fas fa-sun"></i>
+                                        </div>
+                                    {% elif name == 'Asr' %}
+                                        <div class="sticker-icon asr-sticker">
+                                            <i class="fas fa-cloud-sun"></i>
+                                        </div>
+                                    {% elif name == 'Shom' %}
+                                        <div class="sticker-icon maghrib-sticker">
+                                            <i class="fas fa-sunset"></i>
+                                        </div>
+                                    {% elif name == 'Xufton' %}
+                                        <div class="sticker-icon isha-sticker">
+                                            <i class="fas fa-moon-stars"></i>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="prayer-details">
+                                    <h4 class="prayer-name">{{ name }}</h4>
+                                    <span class="prayer-time">{{ time }}</span>
+                                </div>
+                            </div>
+                        </li>
+                   {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="premium-action-buttons animate__animated animate__fadeIn">
+            <a href="/mark-prayer" class="btn btn-premium-action btn-mark-prayer me-3">
+                <i class="fas fa-check-circle me-2"></i>Namozlarni belgilash
+            </a>
+            <a href="/prayer-analysis" class="btn btn-premium-action btn-analysis">
+                <i class="fas fa-chart-pie me-2"></i>Namoz tahlili
+            </a>
+        </div>
+
+        <!-- Prayer Status -->
+        {% if today_prayer %}
+            <div class="premium-status-card animate__animated animate__fadeIn">
+                <div class="status-header">
+                    <i class="fas fa-praying-hands white-icon"></i>
+                    <h4>Bugungi namozlar holati</h4>
+                </div>
+                <div class="status-grid">
+                    <div class="status-item {% if today_prayer.fajr %}completed{% else %}pending{% endif %}">
+                        <div class="status-icon">
+                            {% if today_prayer.fajr %}<i class="fas fa-check-circle"></i>{% else %}<i class="fas fa-clock"></i>{% endif %}
+                        </div>
+                        <span class="status-text">Bomdod</span>
+                    </div>
+                    <div class="status-item {% if today_prayer.dhuhr %}completed{% else %}pending{% endif %}">
+                        <div class="status-icon">
+                            {% if today_prayer.dhuhr %}<i class="fas fa-check-circle"></i>{% else %}<i class="fas fa-clock"></i>{% endif %}
+                        </div>
+                        <span class="status-text">Peshin</span>
+                    </div>
+                    <div class="status-item {% if today_prayer.asr %}completed{% else %}pending{% endif %}">
+                        <div class="status-icon">
+                            {% if today_prayer.asr %}<i class="fas fa-check-circle"></i>{% else %}<i class="fas fa-clock"></i>{% endif %}
+                        </div>
+                        <span class="status-text">Asr</span>
+                    </div>
+                    <div class="status-item {% if today_prayer.maghrib %}completed{% else %}pending{% endif %}">
+                        <div class="status-icon">
+                            {% if today_prayer.maghrib %}<i class="fas fa-check-circle"></i>{% else %}<i class="fas fa-clock"></i>{% endif %}
+                        </div>
+                        <span class="status-text">Shom</span>
+                    </div>
+                    <div class="status-item {% if today_prayer.isha %}completed{% else %}pending{% endif %}">
+                        <div class="status-icon">
+                            {% if today_prayer.isha %}<i class="fas fa-check-circle"></i>{% else %}<i class="fas fa-clock"></i>{% endif %}
+                        </div>
+                        <span class="status-text">Xufton</span>
+                    </div>
+                </div>
+                
+                <div class="status-message">
+                    {% set completed_prayers = [today_prayer.fajr, today_prayer.dhuhr, today_prayer.asr, today_prayer.maghrib, today_prayer.isha]|select|list|length %}
+                    {% if completed_prayers == 5 %}
+                        <div class="message success">
+                            <i class="fas fa-star white-icon"></i>
+                            <span>Ajoyib! Bugun barcha namozlaringizni o'qigansiz!</span>
+                        </div>
+                    {% elif completed_prayers >= 3 %}
+                        <div class="message info">
+                            <i class="fas fa-thumbs-up white-icon"></i>
+                            <span>Yaxshi ish! Davom eting!</span>
+                        </div>
+                    {% else %}
+                        <div class="message warning">
+                            <i class="fas fa-heart white-icon"></i>
+                            <span>Har bir namoz yangi imkoniyatdir. Iloji boricha o'qishga harakat qiling.</span>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+
+        <!-- Quote Section -->
+        <div class="premium-quote-section animate__animated animate__fadeIn">
+            <div class="quote-container">
+                <i class="fas fa-quote-left quote-icon"></i>
+                <p id="random-quote" class="premium-quote">Namoz - bu mo'minning me'roji va uning Rabbiga yaqin bo'lish vositasi</p>
+                <i class="fas fa-quote-right quote-icon"></i>
+                <div class="quote-reference" id="quote-reference">- Imom al-G'azzoliy</div>
+            </div>
+            <button class="btn btn-premium-quote mt-3" id="next-quote-btn">
+                <i class="fas fa-redo me-2"></i> Yangi iqtibos
+            </button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <script>
+        // Sana va vaqtni yangilash
+        function updateDateTime() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById("current-date").textContent = now.toLocaleDateString('uz-UZ', options);
+            document.getElementById("current-time").textContent = now.toLocaleTimeString('uz-UZ');
+            
+            // Hijriy sana
+            const hijriDate = calculateHijriDate(now);
+            document.getElementById("hijri-date").textContent = hijriDate;
+        }
+
+        function calculateHijriDate(gregorianDate) {
+            const hijriOffset = -579;
+            const hijriDate = new Date(gregorianDate);
+            hijriDate.setDate(hijriDate.getDate() + hijriOffset);
+            
+            const hijriMonths = ['Muharram', 'Safar', "Rabi' al-awwal", "Rabi' al-thani", 
+                                'Jumada al-awwal', 'Jumada al-thani', 'Rajab', 
+                                "Sha'ban", 'Ramadan', 'Shawwal', "Dhu al-Qi'dah", "Dhu al-Hijjah"];
+            
+            return `${hijriDate.getDate()}-${hijriMonths[hijriDate.getMonth()]} ${hijriDate.getFullYear()}-yil (Hijriy)`;
+        }
+
+        // Hikmatli so'zlar
+        const quotes = [
+            {text: "Namoz - bu mo'minning me'roji va uning Rabbiga yaqin bo'lish vositasi", ref: "Imom al-G'azzoliy"},
+            {text: "Namoz - bu qalbning tinchligi va ruhning tozalanishi", ref: "Ibn Qayyim al-Javziyya"},
+            {text: "Namoz vaqti - bu Alloh bilan suhbat vaqti", ref: "Shayx Muhammad Sodiq Muhammad Yusuf"},
+            {text: "Namozingizni go'zal qiling, chunki u sizning Rabbingiz bilan muloqotingizdir", ref: "Imom al-Buxoriy"},
+            {text: "Namoz - bu kun davomida besh marta tozalanish va yangilanish", ref: "Said Nursiy"},
+            {text: "Namoz - bu hayotning shovqinidan vaqtincha chiqib, haqiqat bilan yuzma-yuz kelish", ref: "Ali ibn Abu Tolib"}
+        ];
+        
+        function displayRandomQuote() {
+            const randomIndex = Math.floor(Math.random() * quotes.length);
+            document.getElementById("random-quote").textContent = quotes[randomIndex].text;
+            document.getElementById("quote-reference").textContent = "- " + quotes[randomIndex].ref;
+        }
+        
+        setInterval(updateDateTime, 1000);
+        updateDateTime();
+        displayRandomQuote();
+        
+        document.getElementById('next-quote-btn').addEventListener('click', displayRandomQuote);
+
+        // Animatsiyalar
+        gsap.to(".green-circle-1", {y: 20, duration: 3, repeat: -1, yoyo: true, ease: "sine.inOut"});
+        gsap.to(".green-circle-2", {y: -15, duration: 4, repeat: -1, yoyo: true, ease: "sine.inOut"});
+        gsap.to(".green-circle-3", {y: 25, duration: 5, repeat: -1, yoyo: true, ease: "sine.inOut"});
+    </script>
+</body>
+</html>
